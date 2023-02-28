@@ -23,5 +23,6 @@ tester:  $(OBJS)
 clean:
 	rm -rf $(OBJS)
 	rm -rf $(EXECS)
+	rm -rf *.txt
 
 .PHONY: clean

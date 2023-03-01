@@ -1,5 +1,7 @@
 // Author: Joe Mafrici
 // Purpose: Implementation of the Insertion Sort algorithm
+//
+#include <stddef.h>
 
 //***********************************************
 // Sorts an array of positive integers in ascending order
@@ -9,7 +11,7 @@
 // example output: array = {1, 2, 3, 4, 5, 6}
 void insertion_sort(int *array, int size)
 {
-    for (int jj = 1; jj < size; ++jj)
+    for (size_t jj = 1; jj < size; ++jj)
     {
         int key = array[jj];
         // insert key into sorted sequence

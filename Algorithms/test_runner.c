@@ -3,6 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stddef.h> // size_t
 #include <getopt.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -27,7 +28,7 @@ int main(int argc, char **argv)
 
     printf("filling array with %d positive integers\n", g_size);
 
-    for (int ii = 0; ii < g_size; ++ii)
+    for (size_t ii = 0; ii < g_size; ++ii)
     {
         data[ii] = rand() % 1000;
     }
@@ -36,7 +37,7 @@ int main(int argc, char **argv)
     {
         printf("writing array contents to beforesort.txt...\n");
         FILE *file = fopen("beforesort.txt", "w+");
-        for (int ii = 0; ii < g_size; ++ii)
+        for (size_t ii = 0; ii < g_size; ++ii)
         {
             fprintf(file, "%d\n", data[ii]);
         }
@@ -58,7 +59,7 @@ int main(int argc, char **argv)
     {
         printf("array contents written to aftersort.txt\n");
         FILE *file = fopen("aftersort.txt", "w+");
-        for (int ii = 0; ii < g_size; ++ii)
+        for (size_t ii = 0; ii < g_size; ++ii)
         {
             fprintf(file, "%d\n", data[ii]);
         }
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
 int validate_sort(int *data, int size)
 {
     int prev = 0;
-    for (int ii = 0; ii < g_size; ++ii)
+    for (size_t ii = 0; ii < g_size; ++ii)
     {
         if (prev > data[ii])
         {

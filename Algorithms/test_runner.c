@@ -3,11 +3,12 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <getopt.h>
 #include <stdio.h>
+//#include <stdbool.h>
 #include "sorts.h"
-
 static int g_size;
-static int g_print_level;
+static int g_print_level; // TODO: make a boolean
 static char *helpstring = "tester\n"
                                 "-h print help string\n"
                                 "-s <size> size of array to sort\n"

@@ -4,7 +4,7 @@
 #
 EXECS = tester
 CC = gcc
-CFLAGS = -g -Wall -Werror -O0
+CFLAGS = -g -Wall -Werror -O0 -std=c17
 OBJS = test_runner.o \
 	   sorts.o \
 

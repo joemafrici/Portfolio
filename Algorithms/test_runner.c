@@ -5,10 +5,11 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <stdio.h>
-//#include <stdbool.h>
+#include <stdbool.h>
 #include "sorts.h"
+
 static int g_size;
-static int g_print_level; // TODO: make a boolean
+static bool g_should_print;
 static char *helpstring = "tester\n"
                                 "-h print help string\n"
                                 "-s <size> size of array to sort\n"
@@ -19,7 +20,7 @@ int validate_sort(int *data, int size);
 int main(int argc, char **argv)
 {
     g_size = 200;
-    g_print_level = 0;
+    g_should_print = false;
     process_args(argc, argv);
     srand((unsigned int)time(NULL));
     int data[g_size];
@@ -31,7 +32,7 @@ int main(int argc, char **argv)
         data[ii] = rand() % 1000;
     }
 
-    if (g_print_level)
+    if (g_should_print)
     {
         printf("writing array contents to beforesort.txt...\n");
         FILE *file = fopen("beforesort.txt", "w+");
@@ -53,7 +54,7 @@ int main(int argc, char **argv)
     if (sort_valid) printf("test successful... sort is valid!\n");
     else printf("test failed...\n");
 
-    if (g_print_level)
+    if (g_should_print)
     {
         printf("array contents written to aftersort.txt\n");
         FILE *file = fopen("aftersort.txt", "w+");
@@ -106,7 +107,7 @@ void process_args(int argc, char **argv)
                 g_size = atoi(optarg);
                 break;
             case 'v':
-                g_print_level = 1;
+                g_should_print = true;
                 break;
             case '?':
                 printf("%s\n", helpstring);

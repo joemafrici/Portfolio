@@ -2,16 +2,17 @@
 # Makefile for sorts
 # Author: Joe Mafrici
 #
-EXECS = factorial
+EXECS = tester
 CC = gcc
 CFLAGS = -g -Wall -Werror -O0 -std=c17
-OBJS = factorial.o \
+OBJS = test_runner.o \
+	   sorts.o \
 
 all: $(EXECS)
 
 
-factorial:  $(OBJS)
-	$(CC) -o factorial $(OBJS)
+tester:  $(OBJS)
+	$(CC) -o tester $(OBJS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $? -o $@

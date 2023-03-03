@@ -9,10 +9,15 @@
 #include <stdbool.h>
 #include "sorts.h"
 
-static int g_size;
+static size_t g_size;
+static unsigned g_alg;
 static bool g_should_print;
-static char *helpstring = "tester\n"
+static char *g_helpstring = "tester\n"
                                 "-h print help string\n"
+                                "-a <num> sorting algorithm\n"
+                                    "\t1 - insertion sort\n"
+                                    "\t2 - merge sort\n"
+                                    "\t3 - quick sort\n"
                                 "-s <size> size of array to sort\n"
                                 "-v verbose mode: print array contents\n";
 void process_args(int argc, char **argv);
@@ -21,12 +26,13 @@ int validate_sort(int *data, int size);
 int main(int argc, char **argv)
 {
     g_size = 200;
+    g_alg = 1;
     g_should_print = false;
     process_args(argc, argv);
     srand((unsigned int)time(NULL));
     int data[g_size];
 
-    printf("filling array with %d positive integers\n", g_size);
+    printf("filling array with %zu positive integers\n", g_size);
 
     for (size_t ii = 0; ii < g_size; ++ii)
     {
@@ -45,11 +51,26 @@ int main(int argc, char **argv)
     }
 
     printf("sorting...\n");
-
-    insertion_sort(data, g_size);
+    switch(g_alg)
+    {
+        case 1:
+            insertion_sort(data, g_size);
+            break;
+        case 2:
+            merge_sort(data, g_size);
+            break;
+        default:
+            printf("error: select valid sorting algorithm\n");
+            printf("%s\n", g_helpstring);
+            break;
+    }
 
     printf("verifying sort...\n");
-
+    printf("printing array after sort\n");
+    for (int ii = 0; ii < g_size; ++ii)
+    {
+        printf("%d\n", data[ii]);
+    }
     int sort_valid = validate_sort(data, g_size);
 
     if (sort_valid) printf("test successful... sort is valid!\n");
@@ -66,7 +87,7 @@ int main(int argc, char **argv)
         if (fclose(file) != 0) printf("error closing file\n");
     }
 
-
+    return EXIT_SUCCESS;
 
 }
 
@@ -84,6 +105,7 @@ int validate_sort(int *data, int size)
         {
            return 0;
         }
+        prev = data[ii];
     }
     return 1;
 }
@@ -94,15 +116,19 @@ void process_args(int argc, char **argv)
     int c;
     if (argc == 1)
     {
-        printf("%s\n", helpstring);
+        printf("%s\n", g_helpstring);
+        exit(EXIT_SUCCESS);
     }
-    while ((c = getopt(argc, argv, "hs:v")) != -1)
+    while ((c = getopt(argc, argv, "ha:s:v")) != -1)
     {
         switch(c)
         {
             case 'h':
-                printf("%s\n", helpstring);
+                printf("%s\n", g_helpstring);
                 exit(0);
+                break;
+            case 'a':
+                g_alg = atoi(optarg);
                 break;
             case 's':
                 g_size = atoi(optarg);
@@ -111,7 +137,7 @@ void process_args(int argc, char **argv)
                 g_should_print = true;
                 break;
             case '?':
-                printf("%s\n", helpstring);
+                printf("%s\n", g_helpstring);
                 exit(0);
                 break;
         }

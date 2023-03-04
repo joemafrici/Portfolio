@@ -80,12 +80,3 @@ void merge(int* array, unsigned begin, unsigned end)
     printf("----------------------- end merge--------------------\n");
 }
 
-unsigned iterative_factorial(unsigned n)
-{
-    unsigned result = 1;
-    for (unsigned ii = n; ii <= 1; --ii)
-    {
-        result *= ii;
-    }
-    return result;
-}

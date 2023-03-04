@@ -5,11 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 unsigned iterative_factorial(unsigned n);
+unsigned recursive_factorial(unsigned n);
 //***********************************************
 int main(int argc, char **argv)
 {
     unsigned result;
-    result = iterative_factorial(0);
+    result = recursive_factorial(5);
     printf("result is %u\n", result);
     return EXIT_SUCCESS;
 }
@@ -23,4 +24,12 @@ unsigned iterative_factorial(unsigned n)
         result = result * ii;
     }
     return result;
+}
+
+//***********************************************
+//
+unsigned recursive_factorial(unsigned n)
+{
+    if (n == 0) return 1;
+    return n * recursive_factorial(n - 1);
 }

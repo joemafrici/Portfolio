@@ -1,9 +1,12 @@
+//***********************************************
+// Implementations of sorting algorithms
+// Insertion Sort, Merge Sort
 // Author: Joe Mafrici
-// Purpose: Implementation of the Insertion Sort algorithm
 //
 #include <stddef.h>
 #include <stdio.h>
 #include "sorts.h"
+
 //***********************************************
 // Sorts an array of positive integers in ascending order
 // array: pointer to array of integers

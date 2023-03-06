@@ -1,0 +1,12 @@
+# files for git to ignore
+# Author: Joe Mafrici
+
+# object files
+*.o
+
+# executables
+*.out
+*.exe
+
+# text files
+*.txt

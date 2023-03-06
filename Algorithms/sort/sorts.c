@@ -57,29 +57,16 @@ void split(int* array, unsigned begin, unsigned end)
 // Merges virtual subarrays
 void merge(int* array, unsigned begin, unsigned end)
 {
-    printf("------------------------ in merge--------------------\n");
-    printf("------------------------ array before--------------------\n");
-    int jj = end;
-    for (int ii = begin; ii < end; ++ii)
-    {
-        printf("%d\n", array[ii]);
-    }
-    for (unsigned ii = begin; ii >= jj; ++ii, --jj)
+    size_t jj = end;
+    int temp[end - begin];
+    for (size_t ii = begin; ii <= jj; ++ii, --jj)
     {
         if (array[ii] > array[jj])
         {
-            printf("------------------------ in swap--------------------\n");
             int temp = array[jj];
             array[jj] = array[ii];
             array[ii] = temp;
         }
     }
-    printf("------------------------ array after--------------------\n");
-    for (int ii = begin; ii < end; ++ii)
-    {
-        printf("%d\n", array[ii]);
-    }
-
-    printf("----------------------- end merge--------------------\n");
 }
 

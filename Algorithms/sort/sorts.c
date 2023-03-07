@@ -57,16 +57,26 @@ void split(int* array, unsigned begin, unsigned end)
 // Merges virtual subarrays
 void merge(int* array, unsigned begin, unsigned end)
 {
-    size_t jj = end;
+    size_t middle = (end + begin) / 2;
+    size_t i1 = begin;
+    size_t i2 = middle;
+    size_t temp_index = 0;
     int temp[end - begin];
-    for (size_t ii = begin; ii <= jj; ++ii, --jj)
+    while (i1 <= middle && i2 <= end)
     {
-        if (array[ii] > array[jj])
+        if (array[i1] < array[i2])
         {
-            int temp = array[jj];
-            array[jj] = array[ii];
-            array[ii] = temp;
+            temp[temp_index++] = array[i1++];
         }
+        else
+        {
+            temp[temp_index++] = array[i2++];
+        }
+    }
+
+    for (int ii = begin; ii < end; ++ii)
+    {
+        array[ii] = temp[ii];
     }
 }
 

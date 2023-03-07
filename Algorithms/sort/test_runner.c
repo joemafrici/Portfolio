@@ -29,24 +29,19 @@ static char *g_helpstring = "tester\n"
 //***********************************************
 // Function Declarations
 void process_args(int argc, char **argv);
-int validate_sort(int *data, int size);
+void setup(int* array);
+bool verify_result(int *data, int size);
 
 //***********************************************
 int main(int argc, char **argv)
 {
+    srand((unsigned)time(NULL));
     g_size = 200;
     g_alg = 1;
     g_should_print = false;
     process_args(argc, argv);
-    srand((unsigned int)time(NULL));
     int data[g_size];
-
-    printf("filling array with %zu positive integers\n", g_size);
-
-    for (size_t ii = 0; ii < g_size; ++ii)
-    {
-        data[ii] = rand() % 1000;
-    }
+    setup(data);
 
     if (g_should_print)
     {
@@ -59,7 +54,6 @@ int main(int argc, char **argv)
         if (fclose(file) != 0) printf("error closing file\n");
     }
 
-    printf("sorting...\n");
     switch(g_alg)
     {
         case 1:
@@ -71,16 +65,11 @@ int main(int argc, char **argv)
         default:
             printf("error: select valid sorting algorithm\n");
             printf("%s\n", g_helpstring);
+            exit(EXIT_FAILURE);
             break;
     }
 
-    printf("verifying sort...\n");
-    printf("printing array after sort\n");
-    for (int ii = 0; ii < g_size; ++ii)
-    {
-        printf("%d\n", data[ii]);
-    }
-    int sort_valid = validate_sort(data, g_size);
+    bool sort_valid = verify_result(data, g_size);
 
     if (sort_valid) printf("test successful... sort is valid!\n");
     else printf("test failed...\n");
@@ -97,26 +86,34 @@ int main(int argc, char **argv)
     }
 
     return EXIT_SUCCESS;
-
 }
 
 //***********************************************
 // Verify if array is sorted in ascending order
 // data: array to verify
 // size: size of array
-// return: 1 if array is sorted, 0 if not sorted
-int validate_sort(int *data, int size)
+// return: true if array is sorted, false if not
+bool verify_result(int *data, int size)
 {
     int prev = 0;
     for (size_t ii = 0; ii < g_size; ++ii)
     {
         if (prev > data[ii])
         {
-           return 0;
+           return false;
         }
         prev = data[ii];
     }
-    return 1;
+    return true;
+}
+//***********************************************
+// Set initial array state
+void setup(int * array)
+{
+    for (size_t ii = 0; ii < g_size; ++ii)
+    {
+        array[ii] = rand() % 1000;
+    }
 }
 //***********************************************
 // Process command line arguments

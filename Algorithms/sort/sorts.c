@@ -46,7 +46,7 @@ void merge_sort(int* array, size_t size)
 // Recursively splits array
 void split(int* array, unsigned begin, unsigned end)
 {
-    if (end - begin == 1) return;
+    if (end - begin < 2) return;
     unsigned middle = (end + begin) / 2;
     split(array, begin, middle);
     split(array, middle, end);
@@ -62,7 +62,7 @@ void merge(int* array, unsigned begin, unsigned end)
     size_t i2 = middle;
     size_t temp_index = 0;
     int temp[end - begin];
-    while (i1 <= middle && i2 <= end)
+    while (i1 < middle && i2 < end)
     {
         if (array[i1] < array[i2])
         {
@@ -73,10 +73,18 @@ void merge(int* array, unsigned begin, unsigned end)
             temp[temp_index++] = array[i2++];
         }
     }
-
+    while (i1 < middle)
+    {
+        temp[temp_index++] = array[i1++];
+    }
+    while (i2 < end)
+    {
+        temp[temp_index++] = array[i2++];
+    }
+    int jj = 0;
     for (int ii = begin; ii < end; ++ii)
     {
-        array[ii] = temp[ii];
+        array[ii] = temp[jj++];
     }
 }
 

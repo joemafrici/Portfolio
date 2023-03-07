@@ -1,7 +1,7 @@
 //***********************************************
 // Test runner for search algorithms
 // Author: Joe Mafrici
-//
+// Purpose: Test searching algorithms
 //***********************************************
 // Includes
 #include <stdio.h>
@@ -58,7 +58,7 @@ bool verify_result(int *array)
     return false;
 }
 //***********************************************
-// Set up array state
+// Set initial array state
 void setup(int* array)
 {
     for (size_t ii = 0; ii < g_size; ++ii)
@@ -66,7 +66,7 @@ void setup(int* array)
         array[ii] = rand() % 1000;
     }
 
-    insertion_sort(array, g_size);
+    merge_sort(array, g_size);
 }
 //***********************************************
 // Process command line arguments

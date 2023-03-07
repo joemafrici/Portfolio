@@ -15,7 +15,17 @@
 // example output: array = {1, 2, 3, 4, 5, 6}
 void insertion_sort(int *array, size_t size)
 {
-    for (size_t jj = 1; jj < size; ++jj)
+    __isort(array, 0, size);
+}
+//***********************************************
+// Internal function to perform an insertion sort
+// Used in insertion_sort and quick_sort
+// array: pointer to array of integers
+// begin: starting index of portion of array to sort
+// end: ending index of portion of array to sort
+void __isort(int *array, size_t begin, size_t end)
+{
+    for (size_t jj = begin + 1; jj < end; ++jj)
     {
         int key = array[jj];
         // insert key into sorted sequence
@@ -27,8 +37,8 @@ void insertion_sort(int *array, size_t size)
         }
         array[ii + 1] = key;
     }
-}
 
+}
 //***********************************************
 // Sorts an array of doubles in ascending order
 // array: pointer to an array of doubles
@@ -44,7 +54,7 @@ void merge_sort(int* array, size_t size)
 //***********************************************
 // Helper function for merge_sort
 // Recursively splits array
-void split(int* array, unsigned begin, unsigned end)
+void __split(int* array, unsigned begin, unsigned end)
 {
     if (end - begin < 2) return;
     unsigned middle = (end + begin) / 2;
@@ -55,7 +65,7 @@ void split(int* array, unsigned begin, unsigned end)
 //***********************************************
 // Helper function for merge_sort
 // Merges virtual subarrays
-void merge(int* array, unsigned begin, unsigned end)
+void __merge(int* array, unsigned begin, unsigned end)
 {
     size_t middle = (end + begin) / 2;
     size_t i1 = begin;
@@ -86,5 +96,18 @@ void merge(int* array, unsigned begin, unsigned end)
     {
         array[ii] = temp[jj++];
     }
+}
+//***********************************************
+//
+void quick_sort(int* array, size_t size)
+{
+
+}
+//***********************************************
+//
+void __median_left(int* array, size_t left, size_t right)
+{
+    size_t mid = (left + right) / 2;
+    if (
 }
 

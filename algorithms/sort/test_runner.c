@@ -53,13 +53,15 @@ int main(int argc, char **argv)
         }
         if (fclose(file) != 0) printf("error closing file\n");
     }
-    printf("---------- array before sort -------------\n");
-    for (size_t ii = 0; ii < g_size; ++ii)
+    if (false)
     {
-        printf("%d\t", data[ii]);
+        printf("---------- array before sort -------------\n");
+        for (size_t ii = 0; ii < g_size; ++ii)
+        {
+            printf("%d\t", data[ii]);
+        }
+        printf("\n");
     }
-    printf("\n");
-
     switch(g_alg)
     {
         case 1:
@@ -78,7 +80,7 @@ int main(int argc, char **argv)
             break;
     }
 
-    if (true)
+    if (false)
     {
         printf("---------- array after sort -------------\n");
         for (size_t ii = 0; ii < g_size; ++ii)
@@ -132,7 +134,7 @@ void setup(int * array)
 {
     for (size_t ii = 0; ii < g_size; ++ii)
     {
-        array[ii] = rand() % 1000;
+        array[ii] = rand() % g_size;
     }
 }
 //***********************************************

@@ -102,10 +102,29 @@ void __merge(int* array, unsigned begin, unsigned end)
 //
 void quick_sort(int* array, size_t size)
 {
-    size_t mid = size / 2;
-    size_t pivot = (array[0] + array[mid] + array[size - 1]) / 3;
-    printf("pivot is %lu\n", pivot);
-    pivot = __partition(array, 0, size - 1, pivot);
+    size_t mid_index = size / 2;
+    int first = array[0];
+    int mid = array[mid_index];
+    int last = array[size - 1];
+    int pivot;
+    // set pivot as median of three
+    if ((first >= mid && first <= last) || (first <= mid && first >= last))
+        pivot = first;
+    else if ((mid >= first && mid <= last) || (mid <= first && mid >= last))
+        pivot = mid;
+    else pivot = last;
+
+    __qsort(array, 0, size);
+}
+//***********************************************
+//
+void __qsort(int* array, size_t left, size_t right)
+{
+    if (right - left < 2) return;
+    int pivot = array[right];
+    size_t partition = __partition(array, left, right, pivot);
+    __qsort(array, left, partition - 1);
+    __qsort(array, partition + 1, right);
 }
 //***********************************************
 //
@@ -120,15 +139,16 @@ size_t __partition(int *array, size_t left, size_t right, int pivot)
         {
             ++left_index;
         }
+        // find second value to swap
         while (right_index > left && array[right_index] > pivot)
         {
             --right_index;
         }
         // partition is done when indices cross
         if (left_index >= right_index) break;
-
-        __swap(array, left_index, right_index);
+        else __swap(array, left_index, right_index);
     }
+    __swap(array, left_index, right);
     return left_index;
 }
 //***********************************************

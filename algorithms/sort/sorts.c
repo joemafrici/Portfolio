@@ -5,6 +5,7 @@
 //
 #include <stddef.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "sorts.h"
 
 //***********************************************
@@ -49,7 +50,7 @@ void merge_sort(int* array, size_t size)
 {
     // recursively split the array into subarrays until the
     // subarray size is 1
-    split(array, 0, size);
+    __split(array, 0, size);
 }
 //***********************************************
 // Helper function for merge_sort
@@ -58,9 +59,9 @@ void __split(int* array, unsigned begin, unsigned end)
 {
     if (end - begin < 2) return;
     unsigned middle = (end + begin) / 2;
-    split(array, begin, middle);
-    split(array, middle, end);
-    merge(array, begin, end);
+    __split(array, begin, middle);
+    __split(array, middle, end);
+    __merge(array, begin, end);
 }
 //***********************************************
 // Helper function for merge_sort
@@ -101,13 +102,52 @@ void __merge(int* array, unsigned begin, unsigned end)
 //
 void quick_sort(int* array, size_t size)
 {
+    size_t mid = size / 2;
+    size_t pivot = (array[0] + array[mid] + array[size - 1]) / 3;
+    printf("pivot is %lu\n", pivot);
+    pivot = __partition(array, 0, size - 1, pivot);
+}
+//***********************************************
+//
+size_t __partition(int *array, size_t left, size_t right, int pivot)
+{
+    size_t left_index = left;
+    size_t right_index = right;
+    while (true)
+    {
+        // find first value to swap
+        while (left_index < right && array[left_index] < pivot)
+        {
+            ++left_index;
+        }
+        while (right_index > left && array[right_index] > pivot)
+        {
+            --right_index;
+        }
+        // partition is done when indices cross
+        if (left_index >= right_index) break;
 
+        __swap(array, left_index, right_index);
+    }
+    return left_index;
+}
+//***********************************************
+// Internal function to swap two integers in an array
+// Used by quick_sort
+// array: integer array
+// index1: index of first element to swap
+// index2: index of second element to swap
+void __swap(int* array, size_t index1, size_t index2)
+{
+    int temp = array[index1];
+    array[index1] = array[index2];
+    array[index2] = temp;
 }
 //***********************************************
 //
 void __median_left(int* array, size_t left, size_t right)
 {
-    size_t mid = (left + right) / 2;
-    if (
+    //size_t mid = (left + right) / 2;
+    //if (
 }
 

@@ -53,6 +53,12 @@ int main(int argc, char **argv)
         }
         if (fclose(file) != 0) printf("error closing file\n");
     }
+    printf("---------- array before sort -------------\n");
+    for (size_t ii = 0; ii < g_size; ++ii)
+    {
+        printf("%d\t", data[ii]);
+    }
+    printf("\n");
 
     switch(g_alg)
     {
@@ -62,6 +68,9 @@ int main(int argc, char **argv)
         case 2:
             merge_sort(data, g_size);
             break;
+        case 3:
+            quick_sort(data, g_size);
+            break;
         default:
             printf("error: select valid sorting algorithm\n");
             printf("%s\n", g_helpstring);
@@ -69,20 +78,31 @@ int main(int argc, char **argv)
             break;
     }
 
-    bool sort_valid = verify_result(data, g_size);
-
-    if (sort_valid) printf("test successful... sort is valid!\n");
-    else printf("test failed...\n");
-
-    if (g_should_print)
+    if (true)
     {
-        printf("array contents written to aftersort.txt\n");
-        FILE *file = fopen("aftersort.txt", "w+");
+        printf("---------- array after sort -------------\n");
         for (size_t ii = 0; ii < g_size; ++ii)
         {
-            fprintf(file, "%d\n", data[ii]);
+            printf("%d\t", data[ii]);
         }
-        if (fclose(file) != 0) printf("error closing file\n");
+    }
+    else
+    {
+        bool sort_valid = verify_result(data, g_size);
+
+        if (sort_valid) printf("test successful... sort is valid!\n");
+        else printf("test failed...\n");
+
+        if (g_should_print)
+        {
+            printf("array contents written to aftersort.txt\n");
+            FILE *file = fopen("aftersort.txt", "w+");
+            for (size_t ii = 0; ii < g_size; ++ii)
+            {
+                fprintf(file, "%d\n", data[ii]);
+            }
+            if (fclose(file) != 0) printf("error closing file\n");
+        }
     }
 
     return EXIT_SUCCESS;

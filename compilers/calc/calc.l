@@ -1,16 +1,8 @@
 /* calculator from Flex & Bison by John Levine */
 %{
-    enum yytokentype {
-        NUMBER = 258,
-        ADD = 259,
-        SUB = 260,
-        MUL = 261,
-        DIV = 262,
-        ABS = 263,
-        EOL = 264
-    };
-    int yylval;     // stores token value
+#include "calc.tab.h"
 %}
+
 %%
 "+"     { return ADD; }
 "-"     { return SUB; }
@@ -22,6 +14,7 @@
 [ \t]   { /* ignore whitespace */ }
 .       { printf("MYSTERY CHARACTER %c\n", *yytext); }
 %%
+/*
 int main(int argc, char** argv)
 {
     int tok;
@@ -33,3 +26,4 @@ int main(int argc, char** argv)
         else printf("\n");
     }
 }
+*/

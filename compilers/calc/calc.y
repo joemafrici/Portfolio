@@ -1,5 +1,6 @@
 /* Calculator Parser Generator From Flex & Bison */
 /* ******************************************* */
+/* Prologue */
 %{
 #include <stdio.h>
 int yylex();
@@ -7,17 +8,16 @@ void yyerror(const char*);
 int yydebug;
 %}
 /* ******************************************* */
+/* Declarations */
 %define parse.error detailed
 %define parse.lac full
-/* declare tokens */
-/* terminal symbols */
 %token NUMBER
 %token ADD SUB MUL DIV ABS
 %token OP CP
 %token EOL
 
 /* ******************************************* */
-/* grammar */
+/* Grammar */
 %%
 calclist:   /* nothing - matches at beginning of input */
         | calclist exp EOL      {
@@ -40,7 +40,7 @@ term: NUMBER
     ;
 %%
 //***********************************************
-// main function
+// Epilogue
 int main(int argc, char **argv)
 {
     #ifdef YYDEBUG

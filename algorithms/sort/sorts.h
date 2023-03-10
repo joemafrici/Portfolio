@@ -1,3 +1,7 @@
+//***********************************************
+// Function declarations for sorts.c
+// Author: Joe Mafrici
+//
 void insertion_sort(int* array, size_t size);
 void __isort(int *array, size_t begin, size_t end);
 
@@ -8,4 +12,4 @@ void __merge(int* array, unsigned begin, unsigned end);
 void quick_sort(int* array, size_t size);
 void __qsort(int* array, size_t left, size_t right);
 void __swap(int* array, size_t index1, size_t index2);
-size_t __partition(int *array, size_t left, size_t right, int pivot);
+size_t __partition(int *array, size_t left, size_t right);

@@ -1,13 +1,20 @@
 //***********************************************
 // Implementations of sorting algorithms
-// Insertion Sort, Merge Sort
+// Insertion Sort, Merge Sort, Quick Sort
 // Author: Joe Mafrici
 //
+//***********************************************
+// Includes
 #include <stddef.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "sorts.h"
 
+//***********************************************
+// Function Definitions
+//
+//***********************************************
+//              INSERTION SORT
 //***********************************************
 // Sorts an array of positive integers in ascending order
 // array: pointer to array of integers
@@ -40,6 +47,8 @@ void __isort(int *array, size_t begin, size_t end)
     }
 
 }
+//***********************************************
+//              MERGE SORT
 //***********************************************
 // Sorts an array of doubles in ascending order
 // array: pointer to an array of doubles
@@ -99,35 +108,48 @@ void __merge(int* array, unsigned begin, unsigned end)
     }
 }
 //***********************************************
-//
+//              QUICK SORT
+//***********************************************
+// quick sorts an array of integers
+// array: pointer to an array of integers to sort
+// size: size of array
 void quick_sort(int* array, size_t size)
 {
-    size_t mid_index = size / 2;
     // set pivot as median of three
-    if (array[0] > array[mid_index])
-        __swap(array, 0, mid_index);
-    if (array[mid_index] > array[size -1])
-        __swap(array, mid_index, size - 1);
-    if (array[0] > array[mid_index])
-        __swap(array, 0, mid_index);
-    __qsort(array, 0, size);
+    __qsort(array, 0, size - 1);
 }
 //***********************************************
-//
+// Internal recursive function for quick_sort
+// array: pointer to an array of integers to sort
+// left, right: left and right bounds of array
 void __qsort(int* array, size_t left, size_t right)
 {
     if (right - left < 2) return;
-    int pivot = array[right];
-    size_t partition = __partition(array, left, right, pivot);
-    __qsort(array, left, partition - 1);
-    __qsort(array, partition + 1, right);
+    size_t pivot = __partition(array, left, right);
+    __qsort(array, left, pivot - 1);
+    __qsort(array, pivot + 1, right);
 }
 //***********************************************
-//
-size_t __partition(int *array, size_t left, size_t right, int pivot)
+// Internal function to partition array
+// Uses Median of Three to determine pivot
+// Used in quick_sort
+// array: pointer to an array of integers to partition
+// left, right: left and right bounds of array
+size_t __partition(int *array, size_t left, size_t right)
 {
+    size_t mid_index = (left + right) / 2;
     size_t left_index = left;
     size_t right_index = right;
+
+    if (array[left_index] > array[mid_index])
+        __swap(array, left_index, mid_index);
+    if (array[mid_index] > array[right_index])
+        __swap(array, mid_index, right_index);
+    if (array[left] > array[mid_index])
+        __swap(array, left, mid_index);
+
+    size_t pivot = array[mid_inded];
+
     while (true)
     {
         // find first value to swap
@@ -159,11 +181,3 @@ void __swap(int* array, size_t index1, size_t index2)
     array[index1] = array[index2];
     array[index2] = temp;
 }
-//***********************************************
-//
-void __median_left(int* array, size_t left, size_t right)
-{
-    //size_t mid = (left + right) / 2;
-    //if (
-}
-

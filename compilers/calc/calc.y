@@ -7,6 +7,8 @@ void yyerror(const char*);
 int yydebug;
 %}
 /* ******************************************* */
+%define parse.error detailed
+%define parse.lac full
 /* declare tokens */
 /* terminal symbols */
 %token NUMBER
@@ -19,6 +21,7 @@ int yydebug;
 %%
 calclist:   /* nothing - matches at beginning of input */
         | calclist exp EOL      { printf("= %d\n", $2); }
+        | calclist EOL          { }
         ;
 exp: factor                     /* default $$ = $1 */
    | exp ADD factor             { $$ = $1 + $3; }

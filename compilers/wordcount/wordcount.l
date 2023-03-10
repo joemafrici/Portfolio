@@ -17,9 +17,9 @@ int total_lines = 0;
 /* ******************************************* */
 /* Rules */
 %%
-[^ \t\n\r\f\v]+   { ++words; chars += strlen(yytext); }
-\n          { ++lines; ++chars; }
-.           { ++chars; }
+[^ \t\n\r\f\v]+     { ++words; chars += strlen(yytext); }
+\n                  { ++lines; ++chars; }
+.                   { ++chars; }
 
 %%
 //***********************************************

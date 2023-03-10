@@ -2,6 +2,7 @@
 /* ******************************************* */
 /* Definitions */
 %option noyywrap
+%option nodefault
 %{
 // copied verbatim near the top of output
 #include <stdlib.h>

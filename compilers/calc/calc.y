@@ -1,36 +1,50 @@
 /* Calculator Parser Generator From Flex & Bison */
+/* ******************************************* */
+/* Declarations */
 %{
 #include <stdio.h>
+int yylex();
+void yyerror(const char*);
+int yydebug;
 %}
-
+/* ******************************************* */
 /* declare tokens */
+/* terminal symbols */
 %token NUMBER
 %token ADD SUB MUL DIV ABS
 %token EOL
 
+/* ******************************************* */
+/* grammar */
 %%
 calclist:   /* nothing - matches at beginning of input */
-        | calclist exp EOL      { printf("= %d\n", $1); }
+        | calclist exp EOL      { printf("= %d\n", $2); }
         ;
 exp: factor                     /* default $$ = $1 */
    | exp ADD factor             { $$ = $1 + $3; }
    | exp SUB factor             { $$ = $1 - $3; }
    ;
 factor: term
-      | factor MUl term         { $$ = $1 * $3; }
+      | factor MUL term         { $$ = $1 * $3; }
       | factor DIV term         { $$ = $1 / $3; }
       ;
 term: NUMBER
     | ABS term                  { $$ = $2 >= 0? $2 : - $2; }
     ;
 %%
-
-main(int argc, char **argv)
+//***********************************************
+// main function
+int main(int argc, char **argv)
 {
+    #ifdef YYDEBUG
+        yydebug = 1;
+    #endif
+
     yyparse();
 }
-
-yyerror(char* s)
+//***********************************************
+// Prints error to stderr
+void yyerror(const char* s)
 {
     fprintf(stderr, "error: %s\n", s);
 }

@@ -3,6 +3,9 @@
 #include "calc.tab.h"
 %}
 
+%option noinput
+%option nounput
+
 %%
 "+"     { return ADD; }
 "-"     { return SUB; }

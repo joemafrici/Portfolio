@@ -103,17 +103,13 @@ void __merge(int* array, unsigned begin, unsigned end)
 void quick_sort(int* array, size_t size)
 {
     size_t mid_index = size / 2;
-    int first = array[0];
-    int mid = array[mid_index];
-    int last = array[size - 1];
-    int pivot;
     // set pivot as median of three
-    if ((first >= mid && first <= last) || (first <= mid && first >= last))
-        pivot = first;
-    else if ((mid >= first && mid <= last) || (mid <= first && mid >= last))
-        pivot = mid;
-    else pivot = last;
-
+    if (array[0] > array[mid_index])
+        __swap(array, 0, mid_index);
+    if (array[mid_index] > array[size -1])
+        __swap(array, mid_index, size - 1);
+    if (array[0] > array[mid_index])
+        __swap(array, 0, mid_index);
     __qsort(array, 0, size);
 }
 //***********************************************

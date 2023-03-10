@@ -20,7 +20,10 @@ int yydebug;
 /* grammar */
 %%
 calclist:   /* nothing - matches at beginning of input */
-        | calclist exp EOL      { printf("= %d\n", $2); }
+        | calclist exp EOL      {
+                                    printf("decimal = %d\n", $2);
+                                    printf("hex = %#x\n", $2);
+                                }
         | calclist EOL          { }
         ;
 exp: factor                     /* default $$ = $1 */

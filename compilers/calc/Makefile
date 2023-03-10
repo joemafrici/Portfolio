@@ -7,7 +7,7 @@ CFLAGS = -g -Wall -Werror -O0 -std=c17 -D_XOPEN_SOURCE=700
 all: calc
 
 debug: calc.l calc.y
-	bison --debug --verbose -d calc.y
+	bison --debug --verbose -Wcounterexamples -d calc.y
 	flex -I calc.l
 	gcc $(CFLAGS) -o calc calc.tab.c lex.yy.c -lfl
 

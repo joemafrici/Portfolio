@@ -5,6 +5,7 @@
 
 %option noinput
 %option nounput
+%option nodefault
 
 %%
 "+"                 { return ADD; }

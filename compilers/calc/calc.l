@@ -1,12 +1,15 @@
 /* calculator from Flex & Bison by John Levine */
+/* ******************************************* */
+/* Definitions */
+%option noinput
+%option nounput
+%option nodefault
 %{
 #include "calc.tab.h"
 %}
 
-%option noinput
-%option nounput
-%option nodefault
-
+/* ******************************************* */
+/* Rules */
 %%
 "+"                 { return ADD; }
 "-"                 { return SUB; }
@@ -22,6 +25,8 @@
 [ \t]               { /* ignore whitespace */ }
 .                   { printf("MYSTERY CHARACTER %c\n", *yytext); }
 %%
+//***********************************************
+// User Code
 /*
 int main(int argc, char** argv)
 {

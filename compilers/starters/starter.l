@@ -4,7 +4,7 @@
 %option noyywrap
 %option nodefault
 %{
-#include <stdlib.h>
+    #include <stdlib.h>
 %}
 /* ******************************************* */
 /* Rules */

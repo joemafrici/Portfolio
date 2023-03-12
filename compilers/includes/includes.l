@@ -25,7 +25,7 @@
 /* Rules */
 /* ^"#"[ \t]*include[ \t]*\[\"<]       { BEGIN IFILE; } */
 %%
-"#"include.<                          { BEGIN IFILE; }
+^"#"[ \t]*include[ \t]*[\"<]                          { BEGIN IFILE; }
 <IFILE>[^ \t\n\">]+                 {   /* throw away the rest of the include
                                          * line
                                          * */

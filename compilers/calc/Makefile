@@ -1,25 +1,23 @@
 #************************************************
-# Makefile for calculator
+# Makefile starter
 # Author: Joe Mafrici
 #
 CC = gcc
 CFLAGS = -g -Wall -Werror -O0 -std=c17 -D_XOPEN_SOURCE=700
-all: calc
+EXEC = calc
+all: $(EXEC)
 
-debug: calc.l calc.y
-	bison --debug --verbose -Wcounterexamples -d calc.y
-	flex -I calc.l
-	$(CC) $(CFLAGS) -o calc calc.tab.c lex.yy.c -lfl
-
-calc: calc.l calc.y
-	bison -d calc.y
-	flex -I calc.l
-	$(CC) $(CFLAGS) -o $@ calc.tab.c lex.yy.c -lfl
-
+debug: $(EXEC).l $(EXEC).y
+	bison --debug --verbose -Wcounterexamples -d $(word, 2 $^)
+	flex -I $<
+	$(CC) $(CFLAGS) -o $(EXEC) $(EXEC).tab.c lex.yy.c -lfl
+$(EXEC): $(EXEC).l $(EXEC).y
+	bison -d $(word 2, $^)
+	flex -I $<
+	$(CC) $(CFLAGS) -o $@ $(EXEC).tab.c lex.yy.c -lfl
 clean:
-	rm -rf *.out
-	rm -rf *.yy.c
+	rm -rf lex.yy.c
 	rm -rf *.tab.c
 	rm -rf *.tab.h
-	rm -rf calc
+	rm -rf $(EXEC)
 	rm -rf *.output

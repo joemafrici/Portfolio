@@ -7,10 +7,9 @@ CFLAGS = -g -Wall -Werror -O0 -std=c17 -D_XOPEN_SOURCE=700
 EXEC = includes
 all: $(EXEC)
 
-debug: $(EXEC).l $(EXEC).y
-	bison --debug --verbose -Wcounterexamples -d $(word, 2 $^)
-	flex -I $<
-	$(CC) $(CFLAGS) -o $(EXEC) $(EXEC).tab.c lex.yy.c -lfl
+debug: $(EXEC).l
+	flex --debug -I $<
+	$(CC) $(CFLAGS) -o $(EXEC) lex.yy.c -lfl
 $(EXEC): $(EXEC).l
 	flex -I $<
 	$(CC) $(CFLAGS) -o $@ lex.yy.c -lfl

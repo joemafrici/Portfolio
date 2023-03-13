@@ -23,8 +23,9 @@
 %}
 /* ******************************************* */
 /* Rules */
+/* ^"#"[ \t]*include[ \t]*\[\"<]       { BEGIN IFILE; } */
 %%
-^"#"[ \t]*include[ \t]*\[\"<]       { BEGIN IFILE; }
+"#"include.<                          { BEGIN IFILE; }
 <IFILE>[^ \t\n\">]+                 {   /* throw away the rest of the include
                                          * line
                                          * */
@@ -79,6 +80,7 @@ int main(int argc, char** argv)
 // return: 0 on failure
 int push_file(char *filename)
 {
+    printf("push_file called with filename %s\n", filename);
     FILE* file = fopen(filename, "r");
     if (!file)
     {

@@ -3,6 +3,7 @@
 /* Definitions */
 %option noyywrap
 %option nodefault
+%option nounput
 %{
     #include <stdlib.h>
 %}

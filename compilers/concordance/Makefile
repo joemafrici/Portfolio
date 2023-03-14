@@ -8,7 +8,7 @@ EXEC = concordance
 all: $(EXEC)
 
 debug: $(EXEC).l
-	flex -I $<
+	flex -I -d $<
 	$(CC) $(CFLAGS) -o $(EXEC) lex.yy.c -lfl
 $(EXEC): $(EXEC).l
 	flex -I $<

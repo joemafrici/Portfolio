@@ -2,19 +2,17 @@
 # Makefile starter
 # Author: Joe Mafrici
 #
-CC = gcc
-CFLAGS = -g -Wall -Werror -O0 -std=c17 -D_XOPEN_SOURCE=700
-EXEC = your_exec_name_here
+CC = g++
+CFLAGS = -g -Wall -Werror -O0 -std=c++17 -D_XOPEN_SOURCE=700
+EXEC = concordance
 all: $(EXEC)
 
-debug: $(EXEC).l $(EXEC).y
-	bison --debug --verbose -Wcounterexamples -d $(word, 2 $^)
+debug: $(EXEC).l
 	flex -I $<
-	$(CC) $(CFLAGS) -o $(EXEC) $(EXEC).tab.c lex.yy.c -lfl
-$(EXEC): $(EXEC).l $(EXEC).y
-	bison -d $(word 2, $^)
+	$(CC) $(CFLAGS) -o $(EXEC) lex.yy.c -lfl
+$(EXEC): $(EXEC).l
 	flex -I $<
-	$(CC) $(CFLAGS) -o $@ $(EXEC).tab.c lex.yy.c -lfl
+	$(CC) $(CFLAGS) -o $@ lex.yy.c -lfl
 clean:
 	rm -rf lex.yy.c
 	rm -rf *.tab.c

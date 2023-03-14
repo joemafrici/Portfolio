@@ -1,35 +1,96 @@
 /* */
 /* ******************************************* */
 /* Definitions */
-%option noyywrap nodefault yylineno case-insensitive
+%option nounput noyywrap nodefault yylineno case-insensitive
 %{
-    #include <stdlib.h>
-    typedef struct symbol
+    #include <string>
+    #include <unordered_map>
+    #include <list>
+    #include <iostream>
+
+    struct ref
     {
-        char* name;
-        struct ref* reflist;
-    };
-    typedef struct ref
-    {
-        struct ref* next;
-        char* filename;
+        std::string filename;
         int flags;
         int lineno;
     };
-
-    #define NHASH 9997
-    symbol table[NHASH];
-    symbol* lookup(char*);
-    void addref(int, char*, char*, int);
-    char* curfilename;
+    struct symbol
+    {
+        std::string name;
+        std::list<ref> reflist;
+    };
+    std::unordered_map<std::string, symbol> symbol_table;
+    std::string curfilename;
 %}
 /* ******************************************* */
 /* Rules */
 %%
+a |
+an |
+and |
+are |
+as |
+at |
+be |
+but |
+for |
+in |
+is |
+it |
+of |
+on |
+or |
+that |
+the |
+this |
+to                          { /* ignore common words */ }
+
+[a-z]+(\'(s|t))?            {
+                                if (const auto it = symbol_table.find(yytext);
+                                    it != symbol_table.end())
+                                {
+                                    symbol& cursymbol = it->second;
+                                    ref curref = ref { yytext, 0, yylineno };
+                                    it->second.reflist.push_back(curref);
+                                }
+                                else
+                                {
+                                    /* doesn't exist in table */
+
+                                }
+
+
+                                ref curref = ref { yytext, 0, yylineno };
+                                symbol cursymbol = symbol { yytext };
+                                cursymbol.reflist.push_back(curref);
+                                symbol_table[yytext] = cursymbol;
+                            }
+.|\n                        { /* ignore everything else */ }
 %%
 //***********************************************
 // User Code
 int main(int argc, char** argv)
 {
+    if (argc < 2)
+    {
+        std::cout << "provide filename" << std::endl;
+    }
+    else
+    {
+        for (auto ii = 1; ii < argc; ++ii)
+        {
+            FILE *file = fopen(argv[ii], "r");
+            if (!file) perror(argv[1]); return EXIT_FAILURE;
+
+            curfilename = argv[ii];
+            yyrestart(file);
+            yylineno = 1;
+            yylex();
+            fclose(file);
+        }
+    }
+    //printrefs();
+
     return EXIT_SUCCESS;
+
 }

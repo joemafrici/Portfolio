@@ -80,7 +80,6 @@ int main(int argc, char** argv)
 // return: 0 on failure
 int push_file(char *filename)
 {
-    printf("push_file called with filename %s\n", filename);
     FILE* file = fopen(filename, "r");
     if (!file)
     {

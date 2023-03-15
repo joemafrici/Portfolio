@@ -1,7 +1,8 @@
 /* *******************************************
  * C Cross Referencer
- * Author: Joe Mafrici
+ * Author: Joe Mafrici - Adapted from Bison & Flex
  * ******************************************* */
+
 /* Definitions */
 %option nounput noyywrap nodefault yylineno
 %x COMMENT
@@ -18,31 +19,32 @@ ILEN    ([Uu](L|l|LL|ll)?|(L|l|LL|ll)[Uu]?)
     #include <list>
     #include <iostream>
 
-    struct bufstate
+    struct BufferState
     {
         YY_BUFFER_STATE bs;
         int lineno;
         std::string filename;
         FILE* file;
     }
-    struct ref
+    struct Reference
     {
         std::string filename;
         int flags;
         int lineno;
     };
-    struct symbol
+    struct Symbol
     {
         std::string name;
-        std::list<ref> reflist;
+        std::list<Reference> reflist;
     };
-    std::unordered_map<std::string, symbol> symbol_table;
-    std::vector<bufstate> bufstack;
+    std::unordered_map<std::string, Symbol> symbol_table;
+    std::vector<BufferState> buffer_stack;
     std::string curfilename; /* this might always be on the top of the stack */
     bool defining;       /* set when a name is likely to be a
                           * definition rather than a reference*/
-    void printrefs();
-    void addref();
+    void PrintReferences();
+    void AddReferences();
+    void PushFile(std::string filename);
 %}
 /* ******************************************* */
 /* Rules */
@@ -112,7 +114,7 @@ while                   { /* do nothing */ }
 L?\"([^"\\]|\\['\"?\\abfnrtv]|\\[0-7]{1,3}|\\[Xx][0-9a-fA-F]+|{UCN})*\"
 
 /* punctuators */
-"{"|"<%"|";"                { defining = true; }
+"{"|"<%"|";"                { defining = false; }
 "["|"]""|""("|")"|"{"|"}"|"."|"->"
 "++"|"--"|"&"|"*"|"+"|"-"|"~"|"!"
 "/"|"%"|"<<"|">>"|"<"|">"|"<="|">"|"=="|"^"|"|"|"&&"|"||"
@@ -121,7 +123,7 @@ L?\"([^"\\]|\\['\"?\\abfnrtv]|\\[0-7]{1,3}|\\[Xx][0-9a-fA-F]+|{UCN})*\"
 ","|"#"|"##"
 "<:"|":>"|"%>"|"%:"|"%:%:"
 /* identifier */
-([_a-zA-Z]|{UCN})([_a-zA-Z0-9]|{UCN})*   { addref(yytext, yylineno); }
+([_a-zA-Z]|{UCN})([_a-zA-Z0-9]|{UCN})*   { AddReference(yytext, yylineno); }
 /* whitespace */
 [ \t\n]+
 \\$
@@ -135,7 +137,12 @@ L?\"([^"\\]|\\['\"?\\abfnrtv]|\\[0-7]{1,3}|\\[Xx][0-9a-fA-F]+|{UCN})*\"
 
 /* recognize an include */
 ^"#"[ \t]*include[ \t]*[\"<]            { BEGIN IFILE; }
-<IFILE>[^>\"]+
+<IFILE>[^>\"]+                          {
+                                            int c;
+                                            while ((c = input() && c != '\n');
+                                            yylineno++;
+
+                                        }
 %%
 //***********************************************
 // User Code
@@ -163,14 +170,27 @@ int main(int argc, char** argv)
             fclose(file);
         }
     }
-    printrefs();
+    PrintReferences();
 
     return EXIT_SUCCESS;
 
 }
 //***********************************************
+//
+void PushFile(std::string filename)
+{
+    FILE* file = fopen(filename, "r");
+    if (!file)
+    {
+        perror(filename);
+        return;
+    }
+    BufferState bs {};
+    buffer_state.push(bs);
+}
+//***********************************************
 // Add a reference to symbol_table
-void addref(char* text, int lineno)
+void AddReference(char* text, int lineno)
 {
     if (const auto it = symbol_table.find(text); it != symbol_table.end())
     {
@@ -191,13 +211,13 @@ void addref(char* text, int lineno)
 //***********************************************
 // Prints each symbol in symbol_table
 // Prints each line the symbol is on
-void printrefs()
+void PrintReferences()
 {
-    for (const auto& [key, symb] : symbol_table)
+    for (const auto& [key, symbol] : symbol_table)
     {
         std::cout << "For Key: " << key << std::endl;
-        std::cout << "Symbol: " << symb.name << std::endl;
-        for (const auto& x : symb.reflist)
+        std::cout << "Symbol: " << symbol.name << std::endl;
+        for (const auto& x : symbol.reflist)
         {
             std::cout << "Filename: " << x.filename <<
                 " on line " << x.lineno << std::endl;

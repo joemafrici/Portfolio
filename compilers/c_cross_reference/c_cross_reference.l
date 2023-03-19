@@ -25,7 +25,7 @@ ILEN    ([Uu](L|l|LL|ll)?|(L|l|LL|ll)[Uu]?)
         int lineno;
         std::string filename;
         FILE* file;
-    }
+    };
     struct Reference
     {
         std::string filename;
@@ -38,24 +38,25 @@ ILEN    ([Uu](L|l|LL|ll)?|(L|l|LL|ll)[Uu]?)
         std::list<Reference> reflist;
     };
     std::unordered_map<std::string, Symbol> symbol_table;
-    std::vector<BufferState> buffer_stack;
-    std::string curfilename; /* this might always be on the top of the stack */
+    std::vector<BufferState> include_stack;
     bool defining;       /* set when a name is likely to be a
                           * definition rather than a reference*/
     void PrintReferences();
-    void AddReferences();
-    void PushFile(std::string filename);
+    void AddReference(std::string symbol_name, int lineno);
+    void PushFile(char* filename);
 %}
 /* ******************************************* */
 /* Rules */
 %%
 "/*"                    { BEGIN(COMMENT); }
 <COMMENT>"*/"           { BEGIN(INITIAL); }
-<COMMENT>([^*]|\n)+|.   { /* do nothing */ }
-<COMMENT><<EOF>>        { printf("%s:%d: Unterminated comment\n",
-                            curfilename, yylineno); return EXIT_FAILURE; }
-"//".*\n                { /* do nothing */ }
-/* declaration keywords */
+<COMMENT>([^*]|\n)+|.   { /* inside the comment - do nothing */ }
+<COMMENT><<EOF>>        {
+                            printf("%s:%d: Unterminated comment\n",
+                            include_stack.back().filename.c_str(), yylineno);
+                          return EXIT_FAILURE; }
+"//".*\n                { /* c++ style comments - do nothing */ }
+    /* declaration keywords */
 _Bool |
 _Complex |
 _Imaginary |
@@ -80,7 +81,7 @@ union |
 unsigned |
 void |
 volatile                { defining = true; }
-/* keywords */
+    /* keywords */
 break
 case
 continue
@@ -95,26 +96,26 @@ sizeof
 switch
 while                   { /* do nothing */ }
 
-/* constants */
+    /* constants */
 
-/* integers */
+    /* integers */
 0[0-7]*{ILEN}?
 [1-9][0-9]*{ILEN}?
 0[Xx][0-9a-fA-F]+{ILEN}?
-/* decimal float */
+    /* decimal float */
 ([0-9]*\.[0-9]+|[0-9]+\.){EXP}?[flFL]?
 [0-9]+{EXP}[flFL]?
 
-/* hex float */
+    /* hex float */
 0[Xx]([0-9a-fA-F]*\.[0-9a-fA-F]+\.?)[Pp][-+]?[0-9]+[flFL]?
 
-/* char const */
+    /* char const */
 \'([^'\\]|\\['\"?\\abfnrtv]|\\[0-7]{1,3}|\\[Xx][0-9a-fA-F]+|{UCN})+\'
-/* string literal */
+    /* string literal */
 L?\"([^"\\]|\\['\"?\\abfnrtv]|\\[0-7]{1,3}|\\[Xx][0-9a-fA-F]+|{UCN})*\"
 
-/* punctuators */
-"{"|"<%"|";"                { defining = false; }
+    /* punctuators */
+"{"|"<%"|";"                             { defining = false; }
 "["|"]""|""("|")"|"{"|"}"|"."|"->"
 "++"|"--"|"&"|"*"|"+"|"-"|"~"|"!"
 "/"|"%"|"<<"|">>"|"<"|">"|"<="|">"|"=="|"^"|"|"|"&&"|"||"
@@ -122,26 +123,46 @@ L?\"([^"\\]|\\['\"?\\abfnrtv]|\\[0-7]{1,3}|\\[Xx][0-9a-fA-F]+|{UCN})*\"
 "="|"*="|"/="|"%="|"+="|"-="|"<<="|">>="|"&="|"^="|"|="
 ","|"#"|"##"
 "<:"|":>"|"%>"|"%:"|"%:%:"
-/* identifier */
+    /* identifier */
 ([_a-zA-Z]|{UCN})([_a-zA-Z0-9]|{UCN})*   { AddReference(yytext, yylineno); }
-/* whitespace */
+    /* whitespace */
 [ \t\n]+
 \\$
 
-/* preprocessor stuff */
+    /* preprocessor stuff */
 "#"" "*if.*\n
 "#"" "*else.*\n
 "#"" "*endif.*\n
 "#"" "*define.*\n
 "#"" "*line.*\n
 
-/* recognize an include */
+    /* recognize an include */
 ^"#"[ \t]*include[ \t]*[\"<]            { BEGIN IFILE; }
 <IFILE>[^>\"]+                          {
                                             int c;
-                                            while ((c = input() && c != '\n');
+                                            while ((c = yyinput()) && c != '\n');
                                             yylineno++;
-
+                                            PushFile(yytext);
+                                            BEGIN INITIAL;
+                                        }
+<IFILE>.|\n                             {
+                                            fprintf(stderr, "%s:%d bad include line\n",
+                                                include_stack.back().filename.c_str(),
+                                                yylineno);
+                                            BEGIN INITIAL;
+                                        }
+<<EOF>>                                 {
+                                            if (include_stack.empty())
+                                                yyterminate();
+                                            include_stack.pop_back();
+                                            yy_switch_to_buffer(include_stack.back().bs);
+                                            yylineno = include_stack.back().lineno;
+                                        }
+    /* catch everything else */
+.                                       {
+                                            printf("%s:%d: mystery character '%s'\n",
+                                                include_stack.back().filename.c_str(),
+                                                yylineno, yytext);
                                         }
 %%
 //***********************************************
@@ -163,7 +184,6 @@ int main(int argc, char** argv)
                 return EXIT_FAILURE;
             }
 
-            curfilename = argv[ii];
             yyrestart(file);
             yylineno = 1;
             yylex();
@@ -177,34 +197,33 @@ int main(int argc, char** argv)
 }
 //***********************************************
 //
-void PushFile(std::string filename)
+void PushFile(char* filename)
 {
-    FILE* file = fopen(filename, "r");
+    FILE* file = fopen(filename,"r");
     if (!file)
     {
         perror(filename);
         return;
     }
     BufferState bs {};
-    buffer_state.push(bs);
+    include_stack.push_back(bs);
 }
 //***********************************************
 // Add a reference to symbol_table
-void AddReference(char* text, int lineno)
+void AddReference(std::string symbol_name, int lineno)
 {
-    if (const auto it = symbol_table.find(text); it != symbol_table.end())
+    Reference current_ref = Reference { symbol_name, 0, lineno};
+    if (const auto it = symbol_table.find(symbol_name); it != symbol_table.end())
     {
         //symbol& cursymbol = it->second;
-        ref curref = ref { text, 0, lineno};
-        it->second.reflist.push_back(curref);
+        it->second.reflist.push_back(current_ref);
     }
     else
     {
         /* doesn't exist in table */
-        ref curref = ref { text, 0, lineno};
-        symbol cursymbol = symbol { text};
-        cursymbol.reflist.push_back(curref);
-        symbol_table[text] = cursymbol;
+        Symbol current_sym = Symbol { symbol_name };
+        current_sym.reflist.push_back(current_ref);
+        symbol_table[symbol_name] = current_sym;
     }
 
 }

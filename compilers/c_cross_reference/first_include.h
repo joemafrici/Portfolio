@@ -1,0 +1,2 @@
+void Function();
+int FunctionReturnInt();

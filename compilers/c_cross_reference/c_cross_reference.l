@@ -152,9 +152,9 @@ L?\"([^"\\]|\\['\"?\\abfnrtv]|\\[0-7]{1,3}|\\[Xx][0-9a-fA-F]+|{UCN})*\"
                                             BEGIN INITIAL;
                                         }
 <<EOF>>                                 {
+                                            include_stack.pop_back();
                                             if (include_stack.empty())
                                                 yyterminate();
-                                            include_stack.pop_back();
                                             yy_switch_to_buffer(include_stack.back().bs);
                                             yylineno = include_stack.back().lineno;
                                         }
